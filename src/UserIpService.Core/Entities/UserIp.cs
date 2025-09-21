@@ -8,15 +8,15 @@ namespace UserIpService.Core.Entities
     public class UserIp
     {
         public long UserId { get; set; }
-        
+
         public string IpText { get; set; } = string.Empty;
 
         public IPAddress IpAddress { get; set; } = IPAddress.None;
-        
+
         public DateTimeOffset FirstSeen { get; set; }
-        
+
         public DateTimeOffset LastSeen { get; set; }
-        
+
         public long Count { get; set; }
     }
 }

@@ -2,6 +2,9 @@
 
 namespace UserIpService.Core.Interfaces
 {
+    /// <summary>
+    /// Интерфейс бизнес-сервиса для работы с пользователями и их IP.
+    /// </summary>
     public interface IUserConnectionService
     {
         Task ProcessConnectionAsync(long userId, string ipText, DateTimeOffset? ts = null, CancellationToken ct = default);
