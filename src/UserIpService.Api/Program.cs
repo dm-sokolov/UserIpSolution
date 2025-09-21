@@ -1,6 +1,9 @@
 using MediatR;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using UserIpService.Application;
+using UserIpService.Application.Commands.ProcessConnection;
 using UserIpService.Core.Converters;
 using UserIpService.Core.Interfaces;
 using UserIpService.Core.Services;
@@ -44,6 +47,10 @@ namespace UserIpService.Api
                     typeof(ApplicationMarker).Assembly
                 );
             });
+
+            builder.Services
+                .AddFluentValidationAutoValidation()
+                .AddValidatorsFromAssemblyContaining<ProcessConnectionCommandValidator>();
 
             var app = builder.Build();
 
