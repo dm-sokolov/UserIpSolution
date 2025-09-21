@@ -1,9 +1,14 @@
-using MediatR;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using UserIpService.Application;
+using UserIpService.Application.Behaviors;
 using UserIpService.Application.Commands.ProcessConnection;
+using UserIpService.Application.Queries.FindUsersByIpPrefix;
+using UserIpService.Application.Queries.GetLastConnectionByIp;
+using UserIpService.Application.Queries.GetUserIps;
+using UserIpService.Application.Queries.GetUserLastConnection;
 using UserIpService.Core.Converters;
 using UserIpService.Core.Interfaces;
 using UserIpService.Core.Services;
@@ -48,9 +53,19 @@ namespace UserIpService.Api
                 );
             });
 
+            builder.Services.AddTransient(
+                typeof(IPipelineBehavior<,>),
+                typeof(ValidationBehavior<,>)
+            );
+
             builder.Services
                 .AddFluentValidationAutoValidation()
-                .AddValidatorsFromAssemblyContaining<ProcessConnectionCommandValidator>();
+                .AddValidatorsFromAssemblyContaining<ProcessConnectionCommandValidator>()
+                .AddValidatorsFromAssemblyContaining<FindUsersByIpPrefixQueryValidator>()
+                .AddValidatorsFromAssemblyContaining<GetLastConnectionByIpQueryValidator>()
+                .AddValidatorsFromAssemblyContaining<GetUserIpsQueryValidator>()
+                .AddValidatorsFromAssemblyContaining<GetUserLastConnectionQueryValidator>()
+                ;
 
             var app = builder.Build();
 
