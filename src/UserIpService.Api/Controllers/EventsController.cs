@@ -1,5 +1,6 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using UserIpService.Core.Interfaces;
+using UserIpService.Application.Commands.ProcessConnection;
 
 namespace UserIpService.Api.Controllers
 {
@@ -7,20 +8,17 @@ namespace UserIpService.Api.Controllers
     [Route("api/[controller]")]
     public class EventsController : ControllerBase
     {
-        private readonly IUserConnectionService _service;
+        private readonly IMediator _mediator;
 
-        public EventsController(IUserConnectionService service)
+        public EventsController(IMediator mediator)
         {
-            _service = service;
+            _mediator = mediator;
         }
 
-        /// <summary>
-        /// Принимает событие подключения.
-        /// </summary>
         [HttpPost("connect")]
         public async Task<IActionResult> Connect([FromBody] ConnectEventDto dto)
         {
-            await _service.ProcessConnectionAsync(dto.UserId, dto.Ip);
+            await _mediator.Send(new ProcessConnectionCommand(dto.UserId, dto.Ip));
             return Ok();
         }
 

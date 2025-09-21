@@ -5,7 +5,7 @@ using NUnit.Framework;
 using System.Net.Http.Json;
 using Testcontainers.PostgreSql;
 using UserIpService.Api;
-using UserIpService.Infrastructure;
+using UserIpService.Infrastructure.Data;
 
 namespace UserIpService.Tests
 {

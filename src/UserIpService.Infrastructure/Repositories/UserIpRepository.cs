@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UserIpService.Core.Entities;
 using UserIpService.Core.Interfaces;
+using UserIpService.Infrastructure.Data;
 
 namespace UserIpService.Infrastructure.Repositories
 {
@@ -35,8 +36,41 @@ namespace UserIpService.Infrastructure.Repositories
 
         public async Task UpsertBatchAsync(IEnumerable<UserIp> entries, CancellationToken ct = default)
         {
+            // Загружаем ключи существующих записей одним запросом
+            var keys = entries.Select(e => new { e.UserId, e.IpText }).ToList();
+
+            var existing = await _ctx.UserIps
+                .Where(x => keys.Contains(new { x.UserId, x.IpText }))
+                .ToListAsync(ct);
+
+            var existingMap = existing.ToDictionary(
+                x => (x.UserId, x.IpText),
+                x => x);
+
+            var newEntries = new List<UserIp>();
+
             foreach (var entry in entries)
-                await UpsertAsync(entry, ct);
+            {
+                var key = (entry.UserId, entry.IpText);
+
+                if (existingMap.TryGetValue(key, out var existingEntry))
+                {
+                    // Обновляем существующую запись
+                    existingEntry.LastSeen = entry.LastSeen;
+                    existingEntry.Count++;
+                }
+                else
+                {
+                    // Добавляем новую запись
+                    entry.FirstSeen = entry.LastSeen;
+                    newEntries.Add(entry);
+                }
+            }
+
+            if (newEntries.Count > 0)
+                await _ctx.UserIps.AddRangeAsync(newEntries, ct);
+
+            await _ctx.SaveChangesAsync(ct);
         }
 
         public async Task<IReadOnlyCollection<long>> FindUsersByIpPrefixAsync(string ipPrefix, CancellationToken ct = default)

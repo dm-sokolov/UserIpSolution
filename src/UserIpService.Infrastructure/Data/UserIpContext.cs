@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UserIpService.Core.Entities;
 
-namespace UserIpService.Infrastructure
+namespace UserIpService.Infrastructure.Data
 {
     public class UserIpContext : DbContext
     {

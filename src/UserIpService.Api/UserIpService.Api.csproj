@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -10,6 +10,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="MediatR" Version="13.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
 			<PrivateAssets>all</PrivateAssets>
@@ -19,11 +20,10 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
 	</ItemGroup>
 
-
-
 	<ItemGroup>
-		<ProjectReference Include="..\UserIpService.Core\UserIpService.Core.csproj" />
-		<ProjectReference Include="..\UserIpService.Infrastructure\UserIpService.Infrastructure.csproj" />
+	  <ProjectReference Include="..\UserIpService.Application\UserIpService.Application.csproj" />
+	  <ProjectReference Include="..\UserIpService.Core\UserIpService.Core.csproj" />
+	  <ProjectReference Include="..\UserIpService.Infrastructure\UserIpService.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>

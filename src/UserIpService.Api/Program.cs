@@ -1,9 +1,10 @@
-
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using UserIpService.Application;
 using UserIpService.Core.Converters;
 using UserIpService.Core.Interfaces;
 using UserIpService.Core.Services;
-using UserIpService.Infrastructure;
+using UserIpService.Infrastructure.Data;
 using UserIpService.Infrastructure.Repositories;
 
 namespace UserIpService.Api
@@ -14,6 +15,7 @@ namespace UserIpService.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -23,13 +25,25 @@ namespace UserIpService.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var connStr = builder.Configuration.GetConnectionString("DefaultConnection")
-              ?? throw new InvalidOperationException("Connection string not found.");
 
-            builder.Services.AddDbContext<UserIpContext>(options => options.UseNpgsql(connStr));
+            var connStr = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string not found.");
+
+            builder.Services.AddDbContext<UserIpContext>(options =>
+                options.UseNpgsql(connStr));
+
 
             builder.Services.AddScoped<IUserIpRepository, UserIpRepository>();
             builder.Services.AddScoped<IUserConnectionService, UserConnectionService>();
+
+            builder.Services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssemblies(
+                    typeof(UserConnectionService).Assembly,
+                    typeof(UserIpRepository).Assembly,
+                    typeof(ApplicationMarker).Assembly
+                );
+            });
 
             var app = builder.Build();
 
@@ -40,10 +54,7 @@ namespace UserIpService.Api
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run();

@@ -3,7 +3,7 @@ using NUnit.Framework;
 using System.Net;
 using Testcontainers.PostgreSql;
 using UserIpService.Core.Entities;
-using UserIpService.Infrastructure;
+using UserIpService.Infrastructure.Data;
 using UserIpService.Infrastructure.Repositories;
 
 namespace UserIpService.Tests

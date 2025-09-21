@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\UserIpService.Api\UserIpService.Api.csproj" />
-    <ProjectReference Include="..\..\src\UserIpService.Infrastructure\UserIpService.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

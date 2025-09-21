@@ -20,9 +20,8 @@
 	</ItemGroup>
 
 
-
 	<ItemGroup>
-		<ProjectReference Include="..\UserIpService.Core\UserIpService.Core.csproj" />
+	  <ProjectReference Include="..\UserIpService.Core\UserIpService.Core.csproj" />
 	</ItemGroup>
 
 </Project>
