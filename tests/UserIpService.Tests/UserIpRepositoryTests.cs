@@ -17,8 +17,7 @@ namespace UserIpService.Tests
 
         [OneTimeSetUp]
         public async Task OneTimeSetUp()
-        {
-            // Создаем и запускаем контейнер PostgreSQL
+        {            
             _dbContainer = new PostgreSqlBuilder()
                 .WithDatabase("useripdb")
                 .WithUsername("postgres")
@@ -26,8 +25,7 @@ namespace UserIpService.Tests
                 .Build();
 
             await _dbContainer.StartAsync();
-
-            // Настраиваем EF Core контекст
+            
             var options = new DbContextOptionsBuilder<UserIpContext>()
                 .UseNpgsql(_dbContainer.GetConnectionString())
                 .Options;
@@ -41,7 +39,7 @@ namespace UserIpService.Tests
         [Test]
         public async Task UpsertAsync_ShouldInsertAndUpdate()
         {
-            // Arrange: создаем тестовую запись
+            // Arrange
             var entry = new UserIp
             {
                 UserId = 1,
@@ -52,18 +50,18 @@ namespace UserIpService.Tests
                 Count = 1
             };
 
-            // Act: первый апсерт (вставка)
+            // Act
             await _repository.UpsertAsync(entry);
 
-            // Assert: запись появилась
+            // Assert
             var inserted = await _context.UserIps.FirstOrDefaultAsync();
             Assert.That(inserted, Is.Not.Null);
             Assert.That(inserted!.Count, Is.EqualTo(1));
 
-            // Act: второй апсерт (обновление + инкремент счетчика)
+            // Act
             await _repository.UpsertAsync(entry);
 
-            // Assert: счётчик увеличился
+            // Assert
             var updated = await _context.UserIps.FirstOrDefaultAsync();
             Assert.That(updated!.Count, Is.EqualTo(2));
         }
@@ -73,12 +71,12 @@ namespace UserIpService.Tests
         {
             if (_context != null)
             {
-                await _context.DisposeAsync(); // ✅ Освобождаем DbContext
+                await _context.DisposeAsync();
             }
 
             if (_dbContainer != null)
             {
-                await _dbContainer.DisposeAsync(); // ✅ Останавливаем контейнер
+                await _dbContainer.DisposeAsync();
             }
         }
     }

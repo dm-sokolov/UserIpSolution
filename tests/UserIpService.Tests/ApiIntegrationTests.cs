@@ -17,8 +17,7 @@ namespace UserIpService.Tests
 
         [OneTimeSetUp]
         public async Task Setup()
-        {
-            // Создаём PostgreSQL контейнер без Dotnet.Testcontainers.* пространств имён
+        {            
             _dbContainer = new PostgreSqlBuilder()
                 .WithDatabase("useripdb")
                 .WithUsername("postgres")
@@ -31,16 +30,19 @@ namespace UserIpService.Tests
                 .WithWebHostBuilder(builder =>
                 {
                     builder.ConfigureServices(services =>
-                    {
-                        // Удаляем старый DbContext
+                    {                        
                         var descriptor = services.SingleOrDefault(
                             d => d.ServiceType == typeof(DbContextOptions<UserIpContext>));
                         if (descriptor != null)
                             services.Remove(descriptor);
 
-                        // Настраиваем DbContext на контейнер PostgreSQL
                         services.AddDbContext<UserIpContext>(options =>
                             options.UseNpgsql(_dbContainer.GetConnectionString()));
+                        
+                        using var sp = services.BuildServiceProvider();
+                        using var scope = sp.CreateScope();
+                        var context = scope.ServiceProvider.GetRequiredService<UserIpContext>();
+                        context.Database.Migrate();
                     });
                 });
         }
@@ -49,11 +51,9 @@ namespace UserIpService.Tests
         public async Task ConnectAndQuery_ShouldReturnUser()
         {
             var client = _factory.CreateClient();
-
-            // Отправляем событие подключения
+            
             await client.PostAsJsonAsync("/api/events/connect", new { UserId = 42L, Ip = "10.0.0.5" });
 
-            // Проверяем поиск пользователя по IP-префиксу
             var response = await client.GetAsync("/api/users/find-by-ip?prefix=10.0");
             var users = await response.Content.ReadFromJsonAsync<List<long>>();
 
@@ -65,12 +65,12 @@ namespace UserIpService.Tests
         {
             if (_factory != null)
             {
-                _factory.Dispose(); // ✅ Освобождаем фабрику
+                _factory.Dispose(); 
             }
 
             if (_dbContainer != null)
             {
-                await _dbContainer.DisposeAsync(); // ✅ Останавливаем контейнер
+                await _dbContainer.DisposeAsync(); 
             }
         }
     }

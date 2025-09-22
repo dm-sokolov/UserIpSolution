@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using UserIpService.Application.Queries.GetUserLastConnection;
 
-namespace UserIpService.Tests
+namespace UserIpService.Tests.Validators
 {
     [TestFixture]
     public class GetUserLastConnectionQueryValidatorTests
