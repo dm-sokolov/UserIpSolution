@@ -23,8 +23,9 @@ namespace UserIpService.Tests
             await service.ProcessConnectionAsync(userId, ip);
 
             // Assert
-            await repo.Received(1).UpsertAsync(
-                Arg.Is<UserIp>(u => u.UserId == userId && u.IpText == ip));
+            await repo
+                .Received(1)
+                .UpsertAsync(Arg.Is<UserIp>(u => u.UserId == userId && u.IpText == ip));
         }
     }
 }

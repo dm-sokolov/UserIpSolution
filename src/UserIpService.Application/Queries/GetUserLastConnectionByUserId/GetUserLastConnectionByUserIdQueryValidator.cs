@@ -5,9 +5,9 @@ namespace UserIpService.Application.Queries.GetUserLastConnection
     /// <summary>
     /// Валидатор для запроса получения последнего подключения пользователя.
     /// </summary>
-    public class GetUserLastConnectionQueryValidator : AbstractValidator<GetUserLastConnectionQuery>
+    public class GetUserLastConnectionByUserIdQueryValidator : AbstractValidator<GetUserLastConnectionByUserIdQuery>
     {
-        public GetUserLastConnectionQueryValidator()
+        public GetUserLastConnectionByUserIdQueryValidator()
         {
             RuleFor(x => x.UserId)
                 .GreaterThan(0)

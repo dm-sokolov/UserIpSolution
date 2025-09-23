@@ -1,13 +1,11 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UserIpService.Application.Commands.ProcessConnection
 {
+    /// <summary>
+    /// Валидатор для команды на регистрацию подключения пользователя
+    /// </summary>
     public class ProcessConnectionCommandValidator : AbstractValidator<ProcessConnectionCommand>
     {
         public ProcessConnectionCommandValidator()
@@ -20,8 +18,6 @@ namespace UserIpService.Application.Commands.ProcessConnection
         }
 
         private bool BeValidIp(string ip)
-        {            
-            return IPAddress.TryParse(ip, out _);
-        }
+            => IPAddress.TryParse(ip, out _);
     }
 }

@@ -3,6 +3,9 @@ using UserIpService.Core.Entities;
 
 namespace UserIpService.Infrastructure.Data
 {
+    /// <summary>
+    /// Контекст БД UserIp
+    /// </summary>
     public class UserIpContext : DbContext
     {
         public DbSet<UserIp> UserIps => Set<UserIp>();
@@ -19,9 +22,14 @@ namespace UserIpService.Infrastructure.Data
                     .IsRequired()
                     .HasMaxLength(128);
 
-                entity.Property(x => x.FirstSeen).IsRequired();
-                entity.Property(x => x.LastSeen).IsRequired();
-                entity.Property(x => x.Count).IsRequired();
+                entity.Property(x => x.FirstSeen)
+                    .IsRequired();
+                
+                entity.Property(x => x.LastSeen)
+                    .IsRequired();
+                
+                entity.Property(x => x.Count)
+                    .IsRequired();
 
                 entity.HasIndex(x => x.IpText);
             });

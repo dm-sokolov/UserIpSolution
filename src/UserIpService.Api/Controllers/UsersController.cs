@@ -21,19 +21,16 @@ namespace UserIpService.Api.Controllers
         }
 
         [HttpGet("find-by-ip")]
-        [Description("Получить Id пользователя по IP")]
+        [Description("Получить список Id пользователей по IP")]
         [ProducesResponseType(typeof(IReadOnlyCollection<long>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IReadOnlyCollection<long>>> FindUsers([FromQuery] string prefix)
+        public async Task<ActionResult<IReadOnlyCollection<long>>> FindUsersByIpPrefix([FromQuery] string ipPrefix, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(prefix))
-                return BadRequest("Параметр prefix обязателен.");
-
-            var result = await _mediator.Send(new FindUsersByIpPrefixQuery(prefix));
+            var result = await _mediator.Send(new FindUsersByIpPrefixQuery(ipPrefix), cancellationToken);
 
             if (result == null || result.Count == 0)
-                return NotFound($"Пользователи с IP, начинающимся на {prefix}, не найдены.");
+                return NotFound($"Пользователи с IP, начинающимся на {ipPrefix}, не найдены.");
 
             return Ok(result);
         }
@@ -42,9 +39,9 @@ namespace UserIpService.Api.Controllers
         [Description("Получить данные о всех IP для конкретного пользователя")]
         [ProducesResponseType(typeof(IReadOnlyCollection<UserIp>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IReadOnlyCollection<UserIp>>> GetUserIps(long userId)
+        public async Task<ActionResult<IReadOnlyCollection<UserIp>>> GetUserIpsByUserId(long userId, CancellationToken cancellationToken)
         {
-            var ips = await _mediator.Send(new GetUserIpsQuery(userId));
+            var ips = await _mediator.Send(new GetUserIpsByUserIdQuery(userId), cancellationToken);
 
             if (ips == null || ips.Count == 0)
                 return NotFound($"IP-адреса для пользователя {userId} не найдены.");
@@ -56,9 +53,9 @@ namespace UserIpService.Api.Controllers
         [Description("Получить данные последнего подключения по пользователю")]
         [ProducesResponseType(typeof(UserIp), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetUserLast(long userId)
+        public async Task<IActionResult> GetUserLastConnectionByUserId(long userId, CancellationToken cancellationToken)
         {
-            var last = await _mediator.Send(new GetUserLastConnectionQuery(userId));
+            var last = await _mediator.Send(new GetUserLastConnectionByUserIdQuery(userId), cancellationToken);
 
             if (last == null)
                 return NotFound($"Данные о последнем подключении пользователя {userId} не найдены.");
@@ -71,12 +68,9 @@ namespace UserIpService.Api.Controllers
         [ProducesResponseType(typeof(DateTimeOffset), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetLastByIp([FromQuery] string ip)
+        public async Task<IActionResult> GetLastConnectionDateTimeByIp([FromQuery] string ip, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(ip))
-                return BadRequest("Параметр ip обязателен.");
-
-            var time = await _mediator.Send(new GetLastConnectionByIpQuery(ip));
+            var time = await _mediator.Send(new GetLastConnectionDateTimeByIpQuery(ip), cancellationToken);
 
             if (time == null)
                 return NotFound($"Для IP {ip} данные о последнем подключении не найдены.");

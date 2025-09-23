@@ -39,7 +39,6 @@ namespace UserIpService.Tests
         [Test]
         public async Task UpsertAsync_ShouldInsertAndUpdate()
         {
-            // Arrange
             var entry = new UserIp
             {
                 UserId = 1,
@@ -48,20 +47,15 @@ namespace UserIpService.Tests
                 FirstSeen = DateTimeOffset.UtcNow,
                 LastSeen = DateTimeOffset.UtcNow,
                 Count = 1
-            };
-
-            // Act
-            await _repository.UpsertAsync(entry);
-
-            // Assert
+            };                        
+            await _repository.UpsertAsync(entry, default);
+                       
             var inserted = await _context.UserIps.FirstOrDefaultAsync();
             Assert.That(inserted, Is.Not.Null);
-            Assert.That(inserted!.Count, Is.EqualTo(1));
+            Assert.That(inserted!.Count, Is.EqualTo(1));            
+            
+            await _repository.UpsertAsync(entry, default);
 
-            // Act
-            await _repository.UpsertAsync(entry);
-
-            // Assert
             var updated = await _context.UserIps.FirstOrDefaultAsync();
             Assert.That(updated!.Count, Is.EqualTo(2));
         }

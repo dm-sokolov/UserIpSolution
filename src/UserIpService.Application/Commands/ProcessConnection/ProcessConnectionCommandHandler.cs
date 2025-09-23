@@ -3,6 +3,9 @@ using UserIpService.Core.Interfaces;
 
 namespace UserIpService.Application.Commands.ProcessConnection
 {
+    /// <summary>
+    /// Обработчик для команды на регистрацию подключения пользователя
+    /// </summary>
     public class ProcessConnectionCommandHandler : IRequestHandler<ProcessConnectionCommand>
     {
         private readonly IUserConnectionService _service;
@@ -13,8 +16,6 @@ namespace UserIpService.Application.Commands.ProcessConnection
         }
 
         public async Task Handle(ProcessConnectionCommand request, CancellationToken cancellationToken)
-        {
-            await _service.ProcessConnectionAsync(request.UserId, request.IpText, null, cancellationToken);
-        }
+            => await _service.ProcessConnectionAsync(request.UserId, request.IpText, null, cancellationToken);
     }
 }

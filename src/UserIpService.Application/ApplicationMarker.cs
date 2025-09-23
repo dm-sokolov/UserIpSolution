@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UserIpService.Application
+﻿namespace UserIpService.Application
 {
+    /// <summary>
+    /// Класс маркер, чтобы MediatR увидел Handler'ы в проекте Application
+    /// </summary>
     public class ApplicationMarker
     {
     }

@@ -5,43 +5,57 @@ using UserIpService.Infrastructure.Data;
 
 namespace UserIpService.Infrastructure.Repositories
 {
+    /// <summary>
+    /// Класс репозитория для БД UserIp
+    /// </summary>
     public class UserIpRepository : IUserIpRepository
     {
-        private readonly UserIpContext _ctx;
+        private readonly UserIpContext _context;
 
-        public UserIpRepository(UserIpContext ctx)
+        public UserIpRepository(UserIpContext context)
         {
-            _ctx = ctx;
+            _context = context;
         }
 
-        public async Task UpsertAsync(UserIp entry, CancellationToken ct = default)
+        /// <summary>
+        /// Добавление или обновление одной записи пользователя и IP
+        /// </summary>
+        /// <param name="entry">Модель пользователя и IP</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns></returns>
+        public async Task UpsertAsync(UserIp entry, CancellationToken cancellationToken)
         {
-            var existing = await _ctx.UserIps
-                .FirstOrDefaultAsync(x => x.UserId == entry.UserId && x.IpText == entry.IpText, ct);
+            var existing = await _context.UserIps
+                .FirstOrDefaultAsync(x => x.UserId == entry.UserId && x.IpText == entry.IpText, cancellationToken);
 
             if (existing == null)
             {
                 entry.FirstSeen = entry.LastSeen;
-                _ctx.UserIps.Add(entry);
+                _context.UserIps.Add(entry);
             }
             else
             {
                 existing.LastSeen = entry.LastSeen;
                 existing.Count++;
-                _ctx.UserIps.Update(existing);
+                _context.UserIps.Update(existing);
             }
 
-            await _ctx.SaveChangesAsync(ct);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task UpsertBatchAsync(IEnumerable<UserIp> entries, CancellationToken ct = default)
-        {
-            // Загружаем ключи существующих записей одним запросом
+        /// <summary>
+        /// Добавление или обновление группы записей пользователей и IP
+        /// </summary>
+        /// <param name="entries">Группа записей пользователей и IP</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns></returns>
+        public async Task UpsertBatchAsync(IEnumerable<UserIp> entries, CancellationToken cancellationToken)
+        {           
             var keys = entries.Select(e => new { e.UserId, e.IpText }).ToList();
 
-            var existing = await _ctx.UserIps
+            var existing = await _context.UserIps
                 .Where(x => keys.Contains(new { x.UserId, x.IpText }))
-                .ToListAsync(ct);
+                .ToListAsync(cancellationToken);
 
             var existingMap = existing.ToDictionary(
                 x => (x.UserId, x.IpText),
@@ -54,56 +68,88 @@ namespace UserIpService.Infrastructure.Repositories
                 var key = (entry.UserId, entry.IpText);
 
                 if (existingMap.TryGetValue(key, out var existingEntry))
-                {
-                    // Обновляем существующую запись
+                {                    
                     existingEntry.LastSeen = entry.LastSeen;
                     existingEntry.Count++;
                 }
                 else
-                {
-                    // Добавляем новую запись
+                {                    
                     entry.FirstSeen = entry.LastSeen;
                     newEntries.Add(entry);
                 }
             }
 
             if (newEntries.Count > 0)
-                await _ctx.UserIps.AddRangeAsync(newEntries, ct);
+            {
+                await _context.UserIps.AddRangeAsync(newEntries, cancellationToken);
+            }
 
-            await _ctx.SaveChangesAsync(ct);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyCollection<long>> FindUsersByIpPrefixAsync(string ipPrefix, CancellationToken ct = default)
+        /// <summary>
+        /// Получение логинов пользователей по полному или начальной части IP адреса
+        /// </summary>
+        /// <param name="ipPrefix">полная или начальная часть IP адреса</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns></returns>
+        public async Task<IReadOnlyCollection<long>> FindUsersByIpPrefixAsync(string ipPrefix, CancellationToken cancellationToken)
         {
-            return await _ctx.UserIps
+            var result = await _context.UserIps
                 .Where(x => x.IpText.StartsWith(ipPrefix))
                 .Select(x => x.UserId)
                 .Distinct()
-                .ToListAsync(ct);
+                .ToListAsync(cancellationToken);
+            
+            return result;
         }
 
-        public async Task<IReadOnlyCollection<UserIp>> GetUserIpsAsync(long userId, CancellationToken ct = default)
+        /// <summary>
+        /// Получение списка всех подключений по пользователю
+        /// </summary>
+        /// <param name="userId">Id пользователя</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns></returns>
+        public async Task<IReadOnlyCollection<UserIp>> GetUserIpsByUserIdAsync(long userId, CancellationToken cancellationToken)
         {
-            return await _ctx.UserIps
+            var result = await _context.UserIps
                 .Where(x => x.UserId == userId)
-                .ToListAsync(ct);
+                .ToListAsync(cancellationToken);
+            
+            return result;
         }
 
-        public async Task<UserIp?> GetUserLastConnectionAsync(long userId, CancellationToken ct = default)
+        /// <summary>
+        /// Получение данных последнего подключению по пользователю
+        /// </summary>
+        /// <param name="userId">Id пользователя</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns></returns>
+        public async Task<UserIp?> GetUserLastConnectionByUserIdAsync(long userId, CancellationToken cancellationToken)
         {
-            return await _ctx.UserIps
+            var result = await _context.UserIps
                 .Where(x => x.UserId == userId)
                 .OrderByDescending(x => x.LastSeen)
-                .FirstOrDefaultAsync(ct);
+                .FirstOrDefaultAsync(cancellationToken);
+            
+            return result;
         }
 
-        public async Task<DateTimeOffset?> GetLastConnectionByIpAsync(string ip, CancellationToken ct = default)
+        /// <summary>
+        /// Получение времени последнего времени подключения по IP
+        /// </summary>
+        /// <param name="ip">IP адрес</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns></returns>
+        public async Task<DateTimeOffset?> GetLastConnectionDateTimeByIpAsync(string ip, CancellationToken cancellationToken)
         {
-            return await _ctx.UserIps
+            var result = await _context.UserIps
                 .Where(x => x.IpText == ip)
                 .OrderByDescending(x => x.LastSeen)
                 .Select(x => (DateTimeOffset?)x.LastSeen)
-                .FirstOrDefaultAsync(ct);
+                .FirstOrDefaultAsync(cancellationToken);
+            
+            return result;
         }
     }
 }

@@ -3,6 +3,9 @@ using System.Net;
 
 namespace UserIpService.Application.Queries.FindUsersByIpPrefix
 {
+    /// <summary>
+    /// Валидатор для запроса на получение списка пользователей по IP-префиксу.
+    /// </summary>
     public class FindUsersByIpPrefixQueryValidator : AbstractValidator<FindUsersByIpPrefixQuery>
     {
         public FindUsersByIpPrefixQueryValidator()
@@ -14,10 +17,9 @@ namespace UserIpService.Application.Queries.FindUsersByIpPrefix
 
         private bool BeValidPrefix(string prefix)
         {
-            // Простейшая проверка: префикс должен быть началом корректного IPv4/IPv6
-            return IPAddress.TryParse(prefix, out _)
-                   || prefix.Any(char.IsDigit)
-                   || prefix.Contains(':'); // простая эвристика для IPv6
+            var result = IPAddress.TryParse(prefix, out _) || prefix.Any(char.IsDigit) || prefix.Contains(':');
+
+            return result;
         }
     }
 }

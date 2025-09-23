@@ -6,9 +6,9 @@ namespace UserIpService.Application.Queries.GetLastConnectionByIp
     /// <summary>
     /// Валидатор для запроса получения времени последнего подключения по IP.
     /// </summary>
-    public class GetLastConnectionByIpQueryValidator : AbstractValidator<GetLastConnectionByIpQuery>
+    public class GetLastConnectionDateTimeByIpQueryValidator : AbstractValidator<GetLastConnectionDateTimeByIpQuery>
     {
-        public GetLastConnectionByIpQueryValidator()
+        public GetLastConnectionDateTimeByIpQueryValidator()
         {
             RuleFor(x => x.Ip)
                 .NotEmpty()
@@ -17,7 +17,7 @@ namespace UserIpService.Application.Queries.GetLastConnectionByIp
                 .WithMessage("Некорректный формат IP-адреса (поддерживаются IPv4 и IPv6).");
         }
 
-        private bool BeValidIp(string ip) =>
-            IPAddress.TryParse(ip, out _);
+        private bool BeValidIp(string ip) 
+            => IPAddress.TryParse(ip, out _);
     }
 }

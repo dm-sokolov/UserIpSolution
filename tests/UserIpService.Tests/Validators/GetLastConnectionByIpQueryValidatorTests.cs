@@ -12,8 +12,8 @@ namespace UserIpService.Tests.Validators
         [TestCase("not-an-ip", false)]
         public void Validate_ShouldReturnExpectedResult(string ip, bool expected)
         {
-            var validator = new GetLastConnectionByIpQueryValidator();
-            var result = validator.Validate(new GetLastConnectionByIpQuery(ip));
+            var validator = new GetLastConnectionDateTimeByIpQueryValidator();
+            var result = validator.Validate(new GetLastConnectionDateTimeByIpQuery(ip));
             Assert.That(result.IsValid, Is.EqualTo(expected));
         }
     }

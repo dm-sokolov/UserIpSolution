@@ -4,6 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace UserIpService.Core.Converters
 {
+    /// <summary>
+    /// Json конвертер для IP адреса
+    /// </summary>
     public class IPAddressConverter : JsonConverter<IPAddress>
     {
         public override IPAddress Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

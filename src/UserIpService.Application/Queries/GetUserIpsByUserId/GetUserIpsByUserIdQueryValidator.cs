@@ -5,9 +5,9 @@ namespace UserIpService.Application.Queries.GetUserIps
     /// <summary>
     /// Валидатор для запроса получения списка IP-адресов пользователя.
     /// </summary>
-    public class GetUserIpsQueryValidator : AbstractValidator<GetUserIpsQuery>
+    public class GetUserIpsByUserIdQueryValidator : AbstractValidator<GetUserIpsByUserIdQuery>
     {
-        public GetUserIpsQueryValidator()
+        public GetUserIpsByUserIdQueryValidator()
         {
             RuleFor(x => x.UserId)
                 .GreaterThan(0)

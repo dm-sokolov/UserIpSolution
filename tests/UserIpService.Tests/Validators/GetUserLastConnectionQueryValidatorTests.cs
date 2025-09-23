@@ -12,8 +12,8 @@ namespace UserIpService.Tests.Validators
         [TestCase(-10, false)]
         public void Validate_ShouldReturnExpectedResult(long userId, bool expectedValid)
         {
-            var validator = new GetUserLastConnectionQueryValidator();
-            var result = validator.Validate(new GetUserLastConnectionQuery(userId));
+            var validator = new GetUserLastConnectionByUserIdQueryValidator();
+            var result = validator.Validate(new GetUserLastConnectionByUserIdQuery(userId));
             Assert.That(result.IsValid, Is.EqualTo(expectedValid));
         }
     }

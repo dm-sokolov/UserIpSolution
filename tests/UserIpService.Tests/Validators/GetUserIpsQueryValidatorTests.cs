@@ -12,8 +12,8 @@ namespace UserIpService.Tests.Validators
         [TestCase(-5, false)]
         public void Validate_ShouldReturnExpectedResult(long userId, bool expected)
         {
-            var validator = new GetUserIpsQueryValidator();
-            var result = validator.Validate(new GetUserIpsQuery(userId));
+            var validator = new GetUserIpsByUserIdQueryValidator();
+            var result = validator.Validate(new GetUserIpsByUserIdQuery(userId));
             Assert.That(result.IsValid, Is.EqualTo(expected));
         }
     }
