@@ -19,7 +19,7 @@ namespace UserIpService.Api.Controllers
         [HttpPost("connect")]
         [Description("Регистрация подключения пользователя")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Connect([FromBody] ConnectEventDto dto, CancellationToken cancellationToken)
         {
             await _mediator.Send(new ProcessConnectionCommand(dto.UserId, dto.Ip), cancellationToken);

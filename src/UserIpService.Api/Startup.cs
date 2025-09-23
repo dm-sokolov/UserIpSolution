@@ -1,4 +1,5 @@
-﻿using UserIpService.Api.Extensions;
+﻿using Microsoft.AspNetCore.Mvc;
+using UserIpService.Api.Extensions;
 
 namespace UserIpService.Api
 {
@@ -25,6 +26,11 @@ namespace UserIpService.Api
                     .AddUserIpCore()
                     .AddUserIpMediatR()
                     .AddUserIpValidation();
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = false;
+            });
         }
 
         public void Configure(IApplicationBuilder app)

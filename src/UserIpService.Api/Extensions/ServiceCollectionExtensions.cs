@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UserIpService.Application;
 using UserIpService.Application.Behaviors;
@@ -51,11 +52,13 @@ namespace UserIpService.Api.Extensions
         public static IServiceCollection AddUserIpValidation(this IServiceCollection services)
         {
             services.AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters()
                 .AddValidatorsFromAssemblyContaining<ProcessConnectionCommandValidator>()
                 .AddValidatorsFromAssemblyContaining<FindUsersByIpPrefixQueryValidator>()
                 .AddValidatorsFromAssemblyContaining<GetLastConnectionDateTimeByIpQueryValidator>()
                 .AddValidatorsFromAssemblyContaining<GetUserIpsByUserIdQueryValidator>()
-                .AddValidatorsFromAssemblyContaining<GetUserLastConnectionByUserIdQueryValidator>();
+                .AddValidatorsFromAssemblyContaining<GetUserLastConnectionByUserIdQueryValidator>();           
+           
             return services;
         }
 
