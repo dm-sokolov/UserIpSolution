@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using System.Net;
+using System.Net.Sockets;
 
 namespace UserIpService.Application.Commands.ProcessConnection
 {
@@ -18,6 +19,17 @@ namespace UserIpService.Application.Commands.ProcessConnection
         }
 
         private bool BeValidIp(string ip)
-            => IPAddress.TryParse(ip, out _);
+        {
+            if (string.IsNullOrWhiteSpace(ip))
+                return false;
+
+            if (IPAddress.TryParse(ip, out var addr))
+            {
+                return addr.AddressFamily == AddressFamily.InterNetwork
+                    || addr.AddressFamily == AddressFamily.InterNetworkV6;
+            }
+
+            return false;
+        }
     }
 }
