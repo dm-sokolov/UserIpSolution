@@ -25,12 +25,12 @@ namespace UserIpService.Api.Controllers
         [ProducesResponseType(typeof(IReadOnlyCollection<long>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IReadOnlyCollection<long>>> FindUsersByIpPrefix([FromQuery] string ipPrefix, CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyCollection<long>>> FindUsersByIpPrefix([FromQuery] string prefix, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new FindUsersByIpPrefixQuery(ipPrefix), cancellationToken);
+            var result = await _mediator.Send(new FindUsersByIpPrefixQuery(prefix), cancellationToken);
 
             if (result == null || result.Count == 0)
-                return NotFound($"Пользователи с IP, начинающимся на {ipPrefix}, не найдены.");
+                return NotFound($"Пользователи с IP, начинающимся на {prefix}, не найдены.");
 
             return Ok(result);
         }

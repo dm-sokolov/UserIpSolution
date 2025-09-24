@@ -32,11 +32,6 @@ namespace UserIpService.Tests.Utils
 
                 services.AddDbContext<UserIpContext>(options =>
                     options.UseNpgsql(_dbContainer.GetConnectionString()));
-
-                using var sp = services.BuildServiceProvider();
-                using var scope = sp.CreateScope();
-                var context = scope.ServiceProvider.GetRequiredService<UserIpContext>();
-                context.Database.Migrate();
             });
         }
 
@@ -46,7 +41,13 @@ namespace UserIpService.Tests.Utils
             Dispose();
         }
 
-        public async Task StartContainerAsync() 
-            => await _dbContainer.StartAsync();
+        public async Task StartContainerAsync()
+        {
+            await _dbContainer.StartAsync();
+
+            using var scope = Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<UserIpContext>();
+            await context.Database.MigrateAsync();
+        }
     }
 }

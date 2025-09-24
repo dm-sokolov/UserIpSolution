@@ -15,11 +15,11 @@ namespace UserIpService.Application.Commands.ProcessConnection
                 .GreaterThan(0).WithMessage("UserId должен быть больше 0.");
 
             RuleFor(x => x.IpText)
-                .Must(BeValidIp).WithMessage("Некорректный IPv4 или IPv6 адрес.");
+                .Must(IsValidIp).WithMessage("Некорректный IPv4 или IPv6 адрес.");
         }
 
-        private bool BeValidIp(string ip)
-        {
+        private bool IsValidIp(string ip)
+        {           
             if (string.IsNullOrWhiteSpace(ip))
                 return false;
 

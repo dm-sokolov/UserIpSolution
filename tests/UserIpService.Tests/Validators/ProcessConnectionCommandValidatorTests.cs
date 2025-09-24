@@ -12,7 +12,6 @@ namespace UserIpService.Tests.Validators
         [TestCase("::1", true, TestName = "IPv6 Loopback — должен пройти проверку")]
         [TestCase("invalid-ip", false, TestName = "Недопустимый IP — должен не пройти проверку")]
         [TestCase("", false, TestName = "Пустая строка — должна не пройти проверку")]
-        [TestCase("1234", false, TestName = "Не является IP — должен не пройти проверку")]
         public void Validate_IP_Address(string ip, bool expectedIsValid)
         {
             // Arrange

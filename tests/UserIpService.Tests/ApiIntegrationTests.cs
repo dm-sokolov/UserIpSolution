@@ -21,9 +21,11 @@ namespace UserIpService.Tests
         {
             var client = _factory.CreateClient();
 
-            await client.PostAsJsonAsync("/api/events/connect", new { UserId = 42L, Ip = "10.0.0.5" });
+            var postResponse = await client.PostAsJsonAsync("/api/events/connect", new { UserId = 42L, Ip = "10.0.0.5" });
+            Assert.That(postResponse.IsSuccessStatusCode, Is.True);
 
             var response = await client.GetAsync("/api/users/find-by-ip?prefix=10.0");
+            response.EnsureSuccessStatusCode();
             var users = await response.Content.ReadFromJsonAsync<List<long>>();
 
             Assert.That(users, Does.Contain(42L));
