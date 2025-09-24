@@ -32,7 +32,7 @@ namespace UserIpService.Tests.Load
             await Parallel.ForEachAsync(Enumerable.Range(1, totalUsers), cancellation.Token,
                 async (userId, token) =>
                 {
-                    int repeat = rnd.Next(1, 4); // каждый пользователь 1–3 раза
+                    int repeat = rnd.Next(1, 4);
                     for (int i = 0; i < repeat; i++)
                     {
                         var dto = new { UserId = userId, Ip = $"10.0.{userId % 255}.{rnd.Next(1, 255)}" };

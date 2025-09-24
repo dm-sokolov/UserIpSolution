@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UserIpService.Application;
 using UserIpService.Application.Behaviors;
@@ -25,6 +24,7 @@ namespace UserIpService.Api.Extensions
             var connStr = config.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Ошибка! Строка подключения к БД не найдена.");
             services.AddDbContext<UserIpContext>(options => options.UseNpgsql(connStr));
+
             return services;
         }
 
@@ -32,6 +32,7 @@ namespace UserIpService.Api.Extensions
         {
             services.AddScoped<IUserIpRepository, UserIpRepository>();
             services.AddScoped<IUserConnectionService, UserConnectionService>();
+
             return services;
         }
 
@@ -46,6 +47,7 @@ namespace UserIpService.Api.Extensions
                 );
             });
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
             return services;
         }
 
@@ -68,6 +70,7 @@ namespace UserIpService.Api.Extensions
             {
                 options.JsonSerializerOptions.Converters.Add(new IPAddressConverter());
             });
+
             return builder;
         }
     }
