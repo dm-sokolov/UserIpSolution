@@ -18,3 +18,7 @@ docker-compose -f docker-compose.yml up -d --build
 Запуск в контейнере только БД
 docker-compose -f docker-compose.postgres.yml up -d --build
 
+Применение миграций
+dotnet ef migrations add InitialCreate --project .\src\UserIpService.Infrastructure --startup-project .\src\UserIpService.Api
+dotnet ef database update --project .\src\UserIpService.Infrastructure --startup-project .\src\UserIpService.Api
+
